@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-white antialiased;
+  background-image: radial-gradient(
+    circle at 20% 20%,
+    rgba(0, 245, 160, 0.05),
+    transparent 40%
+  );
+}
+
+/* Glass card system */
+.glass {
+  @apply bg-panel/70 backdrop-blur-md border border-white/10;
+  box-shadow: 0 0 40px rgba(0, 245, 160, 0.08);
+}
+
+
+/* Advanced card */
+.panel {
+  background-color: #151515;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+
+/* Glow hover */
+.hover-glow:hover {
+  box-shadow: 0 0 40px rgba(0,245,160,0.2);
+  transition: all 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}

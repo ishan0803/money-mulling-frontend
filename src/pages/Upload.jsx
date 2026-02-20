@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Shield, UploadCloud, File, X, CheckCircle2, Loader2, Play } from "lucide-react";
-import { UserButton } from "@clerk/clerk-react";
+import { Shield, UploadCloud, File, X, CheckCircle2, Loader2, Play, LogOut } from "lucide-react";
+import { useClerk } from "@clerk/clerk-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { uploadFile, startAnalysis, getAnalysisStatus } from "../lib/api";
 
@@ -84,6 +84,7 @@ const TerminalLog = ({ active, error }) => {
 };
 
 const UploadCSV = () => {
+  const { signOut, user } = useClerk();
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -175,8 +176,7 @@ const UploadCSV = () => {
 
   return (
     <div className="min-h-screen bg-background-base text-text-primary selection:bg-accents-primary/30">
-      {/* ================= NAVBAR ================= */}
-      <nav className="fixed top-0 w-full z-50 bg-background-base/80 backdrop-blur-2xl border-b border-white/5">
+      <nav className="sticky top-0 z-50 bg-background-base/80 backdrop-blur-2xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="text-accents-primary" size={24} strokeWidth={1.5} />
@@ -192,12 +192,26 @@ const UploadCSV = () => {
             <span className="text-text-primary">Data Ingestion</span>
           </div>
 
-          <UserButton afterSignOutUrl="/" appearance={{ elements: { userButtonAvatarBox: "w-10 h-10 border border-white/10" } }} />
+          <div className="flex items-center gap-3">
+            {user && (
+              <span className="hidden md:block text-xs font-mono text-text-tertiary border border-white/10 px-3 py-1.5 rounded-full">
+                {user.primaryEmailAddress?.emailAddress || user.username}
+              </span>
+            )}
+            <button
+              onClick={() => signOut({ redirectUrl: '/' })}
+              title="Sign Out"
+              className="flex items-center gap-2 text-sm font-mono text-text-secondary hover:text-accents-danger border border-white/10 hover:border-accents-danger/50 px-3 py-2 rounded-xl transition-all focus-ring"
+            >
+              <LogOut size={16} />
+              <span className="hidden sm:block">Sign Out</span>
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* ================= MAIN TUNNEL ================= */}
-      <div className="max-w-5xl mx-auto px-6 pt-32 pb-20 flex flex-col items-center">
+      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col items-center">
 
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-heading font-black mb-4 tracking-tighter">Initialize Target Ledger</h1>

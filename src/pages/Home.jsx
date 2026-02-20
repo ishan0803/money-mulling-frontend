@@ -3,6 +3,8 @@ import { Shield, Activity, Network, FileJson, AlertTriangle, Eye, Lock } from "l
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import ParticleNetwork from "../components/ParticleNetwork";
+import ScrollAnimation from "../components/ScrollAnimation";
+
 
 const MagneticButton = ({ children, className, ...props }) => {
   const ref = useRef(null);
@@ -131,8 +133,15 @@ const AnimatedTextReveal = ({ text }) => {
 };
 
 const Home = () => {
+  const scrollRef = useRef(null);
+
   return (
-    <div className="min-h-screen bg-background-base text-text-primary selection:bg-accents-primary/30 selection:text-accents-primary overflow-x-hidden">
+    <div
+      ref={scrollRef}
+      className="relative min-h-[300vh] bg-background-base text-text-primary selection:bg-accents-primary/30 selection:text-accents-primary overflow-x-hidden"
+    >
+      {/* Scroll Frame Animation Background */}
+      <ScrollAnimation containerRef={scrollRef} />
 
       {/* ================= NAVBAR ================= */}
       <nav className="fixed top-0 w-full z-50 bg-background-base/50 backdrop-blur-2xl border-b border-white/5">
@@ -162,7 +171,7 @@ const Home = () => {
       </nav>
 
       {/* ================= HERO ================= */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden z-20">
         {/* Particle Vector Network Background */}
         <div className="absolute inset-0 z-0">
           <ParticleNetwork />
@@ -221,7 +230,8 @@ const Home = () => {
       </section>
 
       {/* ================= FEATURES BENTO GRID ================= */}
-      <section id="features" className="py-32 px-6 relative z-10">
+      <section id="features" className="py-32 px-6 relative z-20">
+
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 tracking-tight">System Capabilities</h2>

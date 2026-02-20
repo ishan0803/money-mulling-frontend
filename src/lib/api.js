@@ -102,7 +102,7 @@ export async function startIsomorphismSearch(analysisId, targetNode, hops) {
     target_node: targetNode,
     hops,
   });
-  return res.data; // { celery_task_id, message }
+  return res.data; // { match_nodes, match_edges, match_count } — synchronous result
 }
 
 export async function getGraphData(analysisId) {
@@ -114,35 +114,5 @@ export async function getGraphData(analysisId) {
 // ═══════════════════════════════════════════════════════════════
 //  Task Polling
 // ═══════════════════════════════════════════════════════════════
-
-export async function getTaskStatus(taskId) {
-  const res = await api.get(`/api/v1/tasks/${taskId}`);
-  return res.data; // { task_id, status, result, error }
-}
-
-/**
- * Poll a Celery task until it resolves (SUCCESS or FAILURE).
- * Returns the final task status response.
- */
-export function pollTask(taskId, intervalMs = 1500) {
-  return new Promise((resolve, reject) => {
-    const poll = async () => {
-      try {
-        const status = await getTaskStatus(taskId);
-
-        if (status.status === "SUCCESS") {
-          resolve(status);
-        } else if (status.status === "FAILURE") {
-          reject(new Error(status.error || "Task failed"));
-        } else {
-          setTimeout(poll, intervalMs);
-        }
-      } catch (err) {
-        reject(err);
-      }
-    };
-    poll();
-  });
-}
 
 export default api;

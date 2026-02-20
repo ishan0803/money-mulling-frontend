@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Shield, UploadCloud, File, X, CheckCircle2, Loader2, Play } from "lucide-react";
 import { UserButton } from "@clerk/clerk-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { uploadFile, startAnalysis, pollTask } from "../lib/api";
+import { uploadFile, startAnalysis, getAnalysisStatus } from "../lib/api";
 
 const Toggle = ({ enabled, onChange, label, description }) => (
   <div className="flex items-center justify-between p-5 rounded-3xl glass transition-colors w-full border border-white/5 hover:border-white/10 group cursor-pointer" onClick={() => onChange(!enabled)}>
@@ -26,7 +26,7 @@ const processingSteps = [
   "Building topological adjacency matrix...",
   "Executing heuristic cycle-detection...",
   "Running VF2 Graph Isomorphism algorithms...",
-  "Finalizing risk intelligence scoring..."
+  "Finalizing risk intelligence scoring...",
 ];
 
 const TerminalLog = ({ active, error }) => {
@@ -69,7 +69,7 @@ const TerminalLog = ({ active, error }) => {
                 <X size={18} className="mt-0.5 flex-shrink-0" />
                 <span>[ERROR] {error}</span>
               </motion.div>
-            )
+            );
           }
           return (
             <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className={`flex items-start gap-4 ${isLast ? 'text-accents-primary font-semibold' : 'text-text-tertiary'}`}>
@@ -90,11 +90,10 @@ const UploadCSV = () => {
   const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
 
-  // Config State
   const [config, setConfig] = useState({
     detectCycles: true,
     highRiskOnly: false,
-    autoFlag: true
+    autoFlag: true,
   });
 
   const handleFile = useCallback((selectedFile) => {
@@ -127,6 +126,26 @@ const UploadCSV = () => {
     handleFile(e.dataTransfer.files[0]);
   }, [handleFile]);
 
+  /**
+   * Poll /api/v1/analysis/{id}/status every 2s until the backend
+   * marks it 'completed' or 'failed'. No Celery, no task IDs — just DB state.
+   */
+  const pollUntilDone = (analysisId) =>
+    new Promise((resolve, reject) => {
+      const poll = async () => {
+        try {
+          const data = await getAnalysisStatus(analysisId);
+          if (data.status === "completed") return resolve(data);
+          if (data.status === "failed")
+            return reject(new Error(data.error_message || "Analysis failed on the server."));
+          setTimeout(poll, 2000);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      poll();
+    });
+
   const handleAnalyze = async () => {
     if (!file) return;
 
@@ -134,11 +153,16 @@ const UploadCSV = () => {
     setError("");
 
     try {
+      // 1. Upload CSV → get dataset_id
       const uploadResult = await uploadFile(file);
-      const analysisResult = await startAnalysis(uploadResult.dataset_id);
-      await pollTask(analysisResult.celery_task_id);
 
-      // Delay navigation slightly to let the terminal log finish feeling satisfying
+      // 2. Kick off analysis → get analysis_id
+      const analysisResult = await startAnalysis(uploadResult.dataset_id);
+
+      // 3. Poll DB status until done (no Celery!)
+      await pollUntilDone(analysisResult.analysis_id);
+
+      // 4. Navigate to results
       setTimeout(() => {
         navigate(`/analysis/${analysisResult.analysis_id}`);
       }, 1000);
@@ -192,11 +216,10 @@ const UploadCSV = () => {
               onDrop={onDrop}
               htmlFor="ledgerUpload"
               className={`absolute inset-0 flex flex-col items-center justify-center rounded-[3rem] border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden ${isDragging
-                  ? 'border-accents-primary bg-accents-primary/10 shadow-[0_0_50px_rgba(16,185,129,0.2)]'
-                  : 'border-white/20 bg-background-panel/50 hover:border-accents-primary/50 hover:bg-background-panel'
+                ? 'border-accents-primary bg-accents-primary/10 shadow-[0_0_50px_rgba(16,185,129,0.2)]'
+                : 'border-white/20 bg-background-panel/50 hover:border-accents-primary/50 hover:bg-background-panel'
                 }`}
             >
-              {/* Background Glow Ring */}
               <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[100px] pointer-events-none transition-opacity duration-500 ${isDragging ? 'opacity-30 bg-accents-primary' : 'opacity-0'}`} />
 
               <div className="relative z-10 flex flex-col items-center">

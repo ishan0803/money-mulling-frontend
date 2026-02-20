@@ -149,7 +149,7 @@ const Home = () => {
           <div className="flex items-center gap-3">
             <Shield className="text-accents-primary" size={24} strokeWidth={1.5} />
             <span className="text-xl font-heading font-black tracking-tight">
-              Forensics<span className="text-text-secondary">Engine</span>
+              Ozark
             </span>
           </div>
 

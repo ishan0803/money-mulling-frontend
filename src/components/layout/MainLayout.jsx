@@ -9,11 +9,11 @@ const MainLayout = () => {
 
       {/* Top Bar */}
       <header className="h-16 border-b border-white/10 bg-panel/80 backdrop-blur-md flex items-center px-8 justify-between">
-        
+
         <div className="flex items-center gap-3">
           <ShieldCheck className="text-accent" size={22} />
           <span className="font-semibold tracking-wide">
-            Financial Forensics Engine
+            Ozark
           </span>
         </div>
 
@@ -40,11 +40,10 @@ const MainLayout = () => {
 const NavLink = ({ path, label, current }) => (
   <Link
     to={path}
-    className={`transition-all duration-200 ${
-      current === path
+    className={`transition-all duration-200 ${current === path
         ? "text-accent border-b border-accent pb-1"
         : "text-muted hover:text-white"
-    }`}
+      }`}
   >
     {label}
   </Link>

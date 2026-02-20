@@ -182,7 +182,7 @@ const Analysis = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `forensics_export_${analysisId}.json`;
+      a.download = `ozark_export_${analysisId}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -332,7 +332,7 @@ const Analysis = () => {
         <div className="flex items-center gap-4">
           <Link to="/dashboard" className="flex items-center gap-2 text-accents-primary hover:text-white transition-colors">
             <Shield size={20} strokeWidth={1.5} />
-            <span className="font-heading font-black text-base tracking-tight hidden sm:block">ForensicsEngine</span>
+            <span className="font-heading font-black text-base tracking-tight hidden sm:block">Ozark</span>
           </Link>
           <div className="h-5 w-px bg-white/10" />
           <button

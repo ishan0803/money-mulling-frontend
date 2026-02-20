@@ -31,7 +31,7 @@ const Signup = () => (
           </svg>
         </div>
         <span className="text-white font-heading font-black text-xl tracking-tight">
-          Forensics<span className="text-accents-primary">Engine</span>
+          Ozark
         </span>
       </Link>
 
@@ -81,7 +81,7 @@ const Signup = () => (
           </svg>
         </div>
         <span className="text-white font-heading font-black text-lg tracking-tight">
-          Forensics<span className="text-accents-primary">Engine</span>
+          Ozark
         </span>
       </div>
 

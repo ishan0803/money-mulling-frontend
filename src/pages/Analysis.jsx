@@ -7,7 +7,7 @@ import {
 import { useClerk } from "@clerk/clerk-react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import ForceGraph3D from "react-force-graph-3d";
-import { getGraphData, startIsomorphismSearch, pollTask, exportAnalysis } from "../lib/api";
+import { getGraphData, startIsomorphismSearch, exportAnalysis } from "../lib/api";
 import { useReactTable, getCoreRowModel, getSortedRowModel, flexRender } from "@tanstack/react-table";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -128,10 +128,10 @@ const Analysis = () => {
     setIsoResult(null);
     setMatchNodeIds(new Set());
     try {
+      // startIsomorphismSearch now returns the result directly (no Celery polling)
       const isoRes = await startIsomorphismSearch(analysisId, selectedNode.id, hops);
-      const res = await pollTask(isoRes.celery_task_id);
 
-      // After isomorphism, re-fetch graph — backend writes match flags into graph_json
+      // Re-fetch graph — backend writes match flags into graph_json
       const graphRes = await getGraphData(analysisId);
       const risk = graphRes.risk || [];
       const riskLookup = Object.fromEntries(risk.map((r) => [r.account_id, r]));
@@ -142,7 +142,7 @@ const Analysis = () => {
       }));
       setGraphData({ nodes, links: graphRes.graph?.links || [] });
 
-      // Collect match node IDs (nodes where is_match === 1, excluding the seed's own ego-graph)
+      // Collect match node IDs (nodes where is_match === 1, excluding seed's ego-graph)
       const seedEgo = new Set([selectedNode.id]);
       graphData.links.forEach((l) => {
         const src = typeof l.source === "object" ? l.source.id : l.source;
@@ -154,9 +154,9 @@ const Analysis = () => {
         (graphRes.graph?.nodes || []).filter((n) => n.is_match === 1 && !seedEgo.has(n.id)).map((n) => n.id)
       );
       setMatchNodeIds(matched);
-      setIsoResult({ match_count: res.result?.match_count ?? matched.size });
+      setIsoResult({ match_count: isoRes.match_count ?? matched.size });
     } catch (err) {
-      setIsoResult({ error: err?.message || "Isomorphism search failed." });
+      setIsoResult({ error: err?.response?.data?.detail || err?.message || "Isomorphism search failed." });
     } finally {
       setIsoLoading(false);
     }
@@ -427,8 +427,8 @@ const Analysis = () => {
                         onClick={handleIsomorphism}
                         disabled={isoLoading || !selectedNode}
                         className={`w-full py-2 rounded-lg text-[11px] font-bold font-mono tracking-wider flex items-center justify-center gap-2 transition-all ${isoLoading ? "bg-white/5 text-text-tertiary cursor-not-allowed"
-                            : !selectedNode ? "bg-white/5 text-text-tertiary cursor-not-allowed opacity-50"
-                              : "bg-accents-primary/15 text-accents-primary border border-accents-primary/30 hover:bg-accents-primary hover:text-black hover:border-accents-primary"
+                          : !selectedNode ? "bg-white/5 text-text-tertiary cursor-not-allowed opacity-50"
+                            : "bg-accents-primary/15 text-accents-primary border border-accents-primary/30 hover:bg-accents-primary hover:text-black hover:border-accents-primary"
                           }`}
                       >
                         {isoLoading ? <Loader2 size={12} className="animate-spin" /> : <Crosshair size={12} />}

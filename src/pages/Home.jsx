@@ -1,235 +1,269 @@
 import { Link } from "react-router-dom";
-import { Shield } from "lucide-react";
+import { Shield, Activity, Network, FileJson, AlertTriangle, Eye, Lock } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import ParticleNetwork from "../components/ParticleNetwork";
 
-const Home = () => {
+const MagneticButton = ({ children, className, ...props }) => {
+  const ref = useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.1, y: middleY * 0.1 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+
   return (
-    <div className="min-h-screen bg-black text-white">
-
-      {/* ================= NAVBAR ================= */}
-      <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-
-          <div className="flex items-center gap-3">
-            <Shield className="text-emerald-400" size={22} />
-            <span className="text-lg font-semibold">
-              Forensics<span className="text-emerald-400">Engine</span>
-            </span>
-          </div>
-
-          <div className="hidden md:flex gap-10 text-sm text-gray-400">
-            <a href="#detection" className="hover:text-emerald-400 transition">
-              Detection Engine
-            </a>
-            <a href="#intelligence" className="hover:text-emerald-400 transition">
-              Network Intelligence
-            </a>
-            <a href="#reports" className="hover:text-emerald-400 transition">
-              Investigation Reports
-            </a>
-          </div>
-
-          <Link
-            to="/login"
-            className="bg-emerald-400 text-black px-6 py-2 rounded-full font-semibold hover:scale-105 transition"
-          >
-            Get Started
-          </Link>
-
-        </div>
-      </nav>
-
-
-
-      {/* ================= HERO ================= */}
-      <section className="py-32 px-6 relative overflow-hidden">
-
-        {/* GIF Background */}
-        <div className="absolute inset-0 z-0">
-  <img
-    src="/bg.gif"
-    alt="background animation"
-    className="w-full h-full object-cover opacity-60 brightness-125 contrast-110 saturate-110"
-  />
-  <div className="absolute inset-0 bg-black/50"></div>
-</div>
-
-
-        <div className="max-w-7xl mx-auto relative z-10">
-
-          <motion.div
-  className="space-y-8 max-w-2xl"
-  initial={{ opacity: 0, y: 40 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1 }}
->
-
-
-            <div className="inline-block bg-emerald-400/10 border border-emerald-400/30 px-4 py-1.5 rounded-full text-emerald-400 text-xs uppercase tracking-widest font-semibold">
-              Financial Forensics Platform
-            </div>
-
-            <h1 className="text-6xl font-black leading-tight">
-              Expose Hidden <br />
-              <span className="text-emerald-400">
-                Money Muling Networks
-              </span>
-            </h1>
-
-            <p className="text-gray-400 text-lg max-w-lg leading-relaxed">
-              Upload transaction data, reconstruct financial graphs,
-              detect fraud rings, and generate structured investigation reports.
-            </p>
-
-            <div className="flex gap-6 pt-4">
-
-              <Link
-                to="/login"
-                className="inline-block bg-emerald-400 text-black px-8 py-4 rounded-full font-bold hover:scale-105 transition"
-              >
-                Start Analysis
-              </Link>
-
-              <button
-                className="border border-white/20 px-8 py-4 rounded-full font-semibold text-white hover:border-emerald-400 hover:text-emerald-400 transition"
-              >
-                Watch Demo
-              </button>
-
-            </div>
-            </motion.div>
-          </div>
-        
-      </section>
-
-
-      {/* ================= DETECTION ENGINE ================= */}
-      <Reveal>
-      <section id="detection" className="py-28 px-6 bg-[#050505]">
-
-        <SectionHeader
-          title="Detection Engine"
-          description="Process uploaded CSV transaction files to reconstruct money flow patterns and automatically identify suspicious multi-hop activity."
-        />
-
-        <FeatureBlock
-          title="Cycle Detection"
-          text="Identify circular transaction chains where funds move through multiple accounts and return to the origin."
-        />
-
-        <FeatureBlock
-          title="High Velocity Monitoring"
-          text="Detect abnormal transaction speeds and rapid fund movements that indicate potential layering behavior."
-        />
-
-        <FeatureBlock
-          title="Suspicion Scoring"
-          text="Assign dynamic risk scores (0–100) to accounts based on behavioral anomalies and graph positioning."
-        />
-
-      </section>
-        </Reveal>
-
-
-      {/* ================= NETWORK INTELLIGENCE ================= */}
-      <Reveal>
-      <section id="intelligence" className="py-28 px-6">
-
-        <SectionHeader
-          title="Network Intelligence"
-          description="Transform transaction data into interactive graph visualizations that clearly highlight suspicious accounts and fraud rings."
-        />
-
-        <FeatureBlock
-          title="Interactive Graph View"
-          text="Visualize accounts as nodes and transactions as directed edges for full investigative clarity."
-        />
-
-        <FeatureBlock
-          title="Ring Highlighting"
-          text="Clearly distinguish fraud rings using visual clustering and pattern grouping techniques."
-        />
-
-        <FeatureBlock
-          title="Suspicious Node Emphasis"
-          text="Flag high-risk accounts with distinct styling, borders, and visual prominence."
-        />
-
-      </section>
-    </Reveal>
-
-
-      {/* ================= INVESTIGATION REPORTS ================= */}
-      <Reveal>
-      <section id="reports" className="py-28 px-6 bg-[#050505]">
-
-        <SectionHeader
-          title="Investigation Reports"
-          description="Generate structured JSON outputs and summarized fraud ring reports for compliance and forensic review."
-        />
-
-        <FeatureBlock
-          title="Downloadable JSON Output"
-          text="Export suspicious accounts, fraud rings, and summary metrics in standardized JSON format."
-        />
-
-        <FeatureBlock
-          title="Fraud Ring Summary Table"
-          text="Display ring IDs, member accounts, pattern types, and risk scores in a structured tabular format."
-        />
-
-        <FeatureBlock
-          title="Processing Metrics"
-          text="Track total accounts analyzed, suspicious accounts flagged, fraud rings detected, and processing time."
-        />
-
-      </section>
-    </Reveal>
-    </div>
+    <motion.button
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      className={`relative overflow-hidden group focus-ring ${className}`}
+      {...props}
+    >
+      <span className="relative z-10">{children}</span>
+      <div className="absolute inset-0 bg-accents-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
+    </motion.button>
   );
 };
 
+const BentoCard = ({ title, text, icon: Icon, className, delay = 0 }) => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cardRef = useRef(null);
 
-
-/* ================= REUSABLE COMPONENTS ================= */
-
-const SectionHeader = ({ title, description }) => (
-  <div className="max-w-4xl mx-auto text-center mb-16">
-    <h2 className="text-4xl font-bold mb-6">{title}</h2>
-    <p className="text-gray-400">{description}</p>
-  </div>
-);
-
-
-const FeatureBlock = ({ title, text }) => (
-  <motion.div
-    whileHover={{ y: -4 }}
-    className="max-w-4xl mx-auto bg-[#0F0F0F] border border-white/10 rounded-2xl p-8 mb-8 hover:border-emerald-400 transition"
-  >
-    <h3 className="text-xl font-semibold mb-3 text-emerald-400">{title}</h3>
-    <p className="text-gray-400">{text}</p>
-  </motion.div>
-);
-
-
-const Reveal = ({ children }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 60, filter: "blur(8px)" }}
-      animate={
-        isInView
-          ? { opacity: 1, y: 0, filter: "blur(0px)" }
-          : {}
-      }
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      className={`relative overflow-hidden glass rounded-3xl p-8 group ${className}`}
+      style={{
+        "--mouse-x": `${mousePosition.x}px`,
+        "--mouse-y": `${mousePosition.y}px`,
+      }}
     >
-      {children}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(16, 185, 129, 0.15), transparent 40%)`
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 rounded-3xl border border-white/0 transition duration-300 group-hover:border-accents-primary/50"
+        style={{
+          maskImage: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), black, transparent)`,
+          WebkitMaskImage: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), black, transparent)`
+        }}
+      />
+
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }}></div>
+
+      <div className="relative z-10 flex flex-col h-full">
+        {Icon && (
+          <div className="mb-6 inline-flex p-3 rounded-2xl bg-white/5 border border-white/10 text-accents-primary group-hover:scale-110 group-hover:bg-accents-primary/20 transition-all duration-500">
+            <Icon size={24} strokeWidth={1.5} />
+          </div>
+        )}
+        <h3 className="text-2xl font-heading font-bold mb-3 text-text-primary group-hover:text-accents-primary transition-colors">{title}</h3>
+        <p className="text-text-secondary leading-relaxed mt-auto">{text}</p>
+      </div>
     </motion.div>
+  );
+};
+
+const AnimatedTextReveal = ({ text }) => {
+  const words = text.split(" ");
+
+  return (
+    <span className="inline-flex flex-wrap gap-x-3 gap-y-2">
+      {words.map((word, index) => {
+        if (word === "Money") {
+          return <motion.span key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} className="text-accents-primary">Money</motion.span>
+        }
+        if (word === "Muling") {
+          return <motion.span key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: index * 0.1 }} className="text-accents-primary">Muling</motion.span>
+        }
+        if (word === "Networks") {
+          return (
+            <motion.span
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="text-accents-primary drop-shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-[pulse_4s_ease-in-out_infinite]"
+            >
+              {word}
+            </motion.span>
+          );
+        }
+        return (
+          <motion.span
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            {word}
+          </motion.span>
+        );
+      })}
+    </span>
+  );
+};
+
+const Home = () => {
+  return (
+    <div className="min-h-screen bg-background-base text-text-primary selection:bg-accents-primary/30 selection:text-accents-primary overflow-x-hidden">
+
+      {/* ================= NAVBAR ================= */}
+      <nav className="fixed top-0 w-full z-50 bg-background-base/50 backdrop-blur-2xl border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="text-accents-primary" size={24} strokeWidth={1.5} />
+            <span className="text-xl font-heading font-black tracking-tight">
+              Forensics<span className="text-text-secondary">Engine</span>
+            </span>
+          </div>
+
+          <div className="hidden md:flex gap-10 text-sm font-medium text-text-secondary">
+            <a href="#features" className="hover:text-text-primary transition-colors focus-ring rounded-sm">
+              Features
+            </a>
+            <a href="#intelligence" className="hover:text-text-primary transition-colors focus-ring rounded-sm">
+              Intelligence
+            </a>
+          </div>
+
+          <Link to="/login" tabIndex={-1}>
+            <MagneticButton className="bg-white text-black px-6 py-2.5 rounded-full font-semibold text-sm hover:scale-105 transition-transform duration-300">
+              Launch Platform
+            </MagneticButton>
+          </Link>
+        </div>
+      </nav>
+
+      {/* ================= HERO ================= */}
+      <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+        {/* Particle Vector Network Background */}
+        <div className="absolute inset-0 z-0">
+          <ParticleNetwork />
+          {/* Edge masking to fade into background */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#09090b_100%)] pointer-events-none"></div>
+          <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-background-base to-transparent pointer-events-none"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
+          <motion.div
+            className="max-w-4xl space-y-8"
+            initial={{ opacity: 0, filter: "blur(10px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-accents-primary/10 border border-accents-primary/20 px-4 py-1.5 rounded-full text-accents-primary text-xs uppercase tracking-widest font-mono font-semibold"
+            >
+              <Activity size={14} className="animate-pulse" />
+              <span>Military-Grade Investigation</span>
+            </motion.div>
+
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tighter">
+              <AnimatedTextReveal text="Expose Hidden Money Muling Networks" />
+            </h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="text-text-secondary text-lg md:text-xl max-w-2xl leading-relaxed"
+            >
+              Injest massive transaction graphs in milliseconds. Utilize deep topological analysis to detect hyper-complex fraud chains and hidden layering cycles.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="flex flex-wrap gap-4 pt-6"
+            >
+              <Link to="/login" tabIndex={-1}>
+                <MagneticButton className="bg-accents-primary text-black px-8 py-4 rounded-full font-bold shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.5)]">
+                  Start Analysis
+                </MagneticButton>
+              </Link>
+              <button className="px-8 py-4 rounded-full font-semibold text-text-primary border border-white/10 glass hover:bg-white/5 transition-colors focus-ring">
+                View Demo Data
+              </button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ================= FEATURES BENTO GRID ================= */}
+      <section id="features" className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-20">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 tracking-tight">System Capabilities</h2>
+            <p className="text-text-secondary text-lg max-w-2xl">A unified suite of tools designed to tear through obfuscation and expose multi-hop financial crime with surgical precision.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
+            {/* Large Feature Card */}
+            <BentoCard
+              className="md:col-span-2 md:row-span-2 min-h-[400px]"
+              delay={0}
+              icon={Network}
+              title="Graph Intelligence Engine"
+              text="Our core visualizer processes thousands of nodes into a performant 3D WebGL canvas. Pinpoint clusters of high-activity accounts and trace funds across infinite hops without breaking a sweat. Select any node to immediately dim unconnected noise and focus on critical adjacency paths."
+            />
+
+            <BentoCard
+              delay={0.1}
+              icon={AlertTriangle}
+              title="Heuristic Scoring"
+              text="Every entity receives a dynamic risk score between 0 and 100 instantly powered by edge-velocity and cyclic pattern matching."
+            />
+
+            <BentoCard
+              delay={0.2}
+              icon={Eye}
+              title="Cycle Detection"
+              text="Automatically trace circular logic networks where capital returns to its origin point, the definitive signature of layering."
+            />
+
+            <BentoCard
+              className="md:col-span-3"
+              delay={0}
+              icon={FileJson}
+              title="Compliance-Ready Output"
+              text="Export generated intelligence networks, suspect graphs, and detected ring metadata into standardized JSON payloads instantly. Built for seamless integration downward into case management tools or federal reporting systems."
+            />
+          </div>
+        </div>
+      </section>
+
+    </div>
   );
 };
 

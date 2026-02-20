@@ -2,35 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-background text-white antialiased;
-  background-image: radial-gradient(
-    circle at 20% 20%,
-    rgba(0, 245, 160, 0.05),
-    transparent 40%
-  );
+@layer base {
+  body {
+    @apply bg-background-base text-text-primary antialiased font-body font-normal leading-relaxed;
+    /* Removed the global radial gradient for a cleaner base, custom elements will add their own glows */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight font-bold;
+  }
 }
 
-/* Glass card system */
-.glass {
-  @apply bg-panel/70 backdrop-blur-md border border-white/10;
-  box-shadow: 0 0 40px rgba(0, 245, 160, 0.08);
+@layer components {
+  /* Glass card system */
+  .glass {
+    @apply backdrop-blur-xl bg-background-panel/60 border border-white/5 shadow-2xl;
+  }
+
+  /* Advanced card */
+  .panel {
+    @apply bg-background-card border border-white/5 rounded-xl shadow-2xl;
+  }
+
+  /* Glow hover */
+  .hover-glow {
+    @apply transition-shadow duration-500 hover:shadow-[0_0_40px_var(--tw-shadow-color)];
+  }
 }
 
-
-/* Advanced card */
-.panel {
-  background-color: #151515;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-
-
-/* Glow hover */
-.hover-glow:hover {
-  box-shadow: 0 0 40px rgba(0,245,160,0.2);
-  transition: all 0.3s ease;
+@layer utilities {
+  /* Common focus state for interactive elements */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-accents-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-base;
+  }
 }
 
 html {

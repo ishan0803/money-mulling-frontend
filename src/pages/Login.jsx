@@ -1,142 +1,140 @@
 import { Link } from "react-router-dom";
-import { Shield, Lock, Mail } from "lucide-react";
+import { SignIn } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
 
-const Login = () => {
-  return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+/* ─── Animated data-stream lines background ─── */
+const DataLines = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+    {Array.from({ length: 14 }).map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute top-0 w-px"
+        style={{ left: `${(i + 1) * 7}%`, background: "linear-gradient(to bottom, transparent, rgba(16,185,129,0.15), transparent)" }}
+        initial={{ scaleY: 0, opacity: 0 }}
+        animate={{ scaleY: [0, 1, 0], opacity: [0, 1, 0] }}
+        transition={{ duration: 3 + Math.random() * 4, delay: i * 0.22, repeat: Infinity, ease: "linear" }}
+      />
+    ))}
+  </div>
+);
 
-      {/* Background Animation */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/bg.gif"
-          alt="background"
-          className="w-full h-full object-cover opacity-40 brightness-110"
-        />
-        <div className="absolute inset-0 bg-black/70"></div>
-      </div>
+const Login = () => (
+  <div className="min-h-screen bg-[#050505] flex relative overflow-hidden">
+    <DataLines />
 
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Shield className="text-emerald-400" size={22} />
-            <span className="text-lg font-semibold">
-              Forensics<span className="text-emerald-400">Engine</span>
-            </span>
-          </div>
+    {/* ── Left branding panel ── */}
+    <div className="hidden lg:flex w-1/2 flex-col p-14 relative border-r border-white/5">
+      {/* Glowing orbs */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accents-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-accents-danger/5 rounded-full blur-3xl pointer-events-none" />
 
-          <Link
-            to="/"
-            className="text-sm text-gray-400 hover:text-emerald-400 transition"
-          >
-            Back to Home
-          </Link>
+      {/* Logo */}
+      <Link to="/" className="flex items-center gap-3 group w-max z-10">
+        <div className="w-9 h-9 rounded-xl bg-accents-primary/10 border border-accents-primary/30 flex items-center justify-center group-hover:border-accents-primary/60 transition-all">
+          <svg viewBox="0 0 24 24" className="w-5 h-5 text-accents-primary fill-none stroke-current" strokeWidth="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
-      </nav>
+        <span className="text-white font-heading font-black text-xl tracking-tight">
+          Forensics<span className="text-accents-primary">Engine</span>
+        </span>
+      </Link>
 
-      {/* LOGIN SECTION */}
-      <div className="relative z-10 flex items-center justify-center px-6 py-24">
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-md bg-[#0F0F0F] border border-white/10 rounded-3xl p-10 shadow-[0_0_80px_rgba(16,185,129,0.08)]"
-        >
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-semibold">
-              Secure Login
-            </h2>
-            <p className="text-gray-400 text-sm mt-2">
-              Access your encrypted workspace
-            </p>
-          </div>
-
-          {/* Email */}
-          <div className="mb-6">
-            <label className="text-xs text-gray-400 uppercase tracking-wide">
-              Work Email
-            </label>
-            <div className="mt-2 flex items-center bg-black border border-white/10 rounded-xl px-4 py-3 focus-within:border-emerald-400 transition">
-              <Mail size={16} className="text-gray-400 mr-3" />
-              <input
-                type="email"
-                placeholder="name@firm.com"
-                className="bg-transparent outline-none w-full text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="mb-8">
-            <div className="flex justify-between text-xs text-gray-400 uppercase tracking-wide">
-              <span>Password</span>
-              <button className="hover:text-emerald-400 transition">
-                Forgot?
-              </button>
-            </div>
-
-            <div className="mt-2 flex items-center bg-black border border-white/10 rounded-xl px-4 py-3 focus-within:border-emerald-400 transition">
-              <Lock size={16} className="text-gray-400 mr-3" />
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="bg-transparent outline-none w-full text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Login Button */}
-          <button className="w-full bg-emerald-400 text-black py-3 rounded-xl font-semibold hover:scale-[1.02] transition">
-            Initialize Session →
-          </button>
-
-          {/* Divider */}
-<div className="my-8 flex items-center">
-  <div className="flex-grow h-px bg-white/10"></div>
-  <span className="mx-4 text-xs text-gray-500 uppercase tracking-wider">
-    Or
-  </span>
-  <div className="flex-grow h-px bg-white/10"></div>
-</div>
-
-{/* Google Login */}
-<button className="w-full flex items-center justify-center gap-3 border border-white/10 py-3 rounded-xl bg-[#111111] hover:border-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition"
->
-  <img
-    src="https://www.svgrepo.com/show/475656/google-color.svg"
-    alt="google"
-    className="w-5 h-5"
-  />
-  <span className="text-sm font-medium">
-    Continue with Google
-  </span>
-</button>
-
-
-          {/* Request Access */}
-          <p className="text-center text-sm text-gray-500 mt-8">
-            Don't have an account?{" "}
-            <Link 
-            to="/signup"
-            className="text-emerald-400 hover:underline cursor-pointer">
-              Sign Up
-            </Link>
+      {/* Center content */}
+      <div className="flex-1 flex flex-col justify-center z-10 max-w-md">
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <p className="text-[11px] font-mono tracking-[0.2em] text-accents-primary uppercase mb-5 flex items-center gap-2">
+            <span className="block w-8 h-px bg-accents-primary" />
+            Secure Access Portal
           </p>
-
-          {/* Footer Note */}
-          <p className="text-center text-xs text-gray-600 mt-8 tracking-widest">
-            AES-256 END-TO-END ENCRYPTED SESSION
+          <h1 className="text-5xl font-heading font-black text-white leading-[1.1] mb-6 tracking-tight">
+            Detect.<br />Investigate.<br />
+            <span className="text-accents-primary">Neutralize.</span>
+          </h1>
+          <p className="text-text-secondary text-base leading-relaxed font-body">
+            Real-time financial graph analysis. Identify money mule networks, track layering cycles, and flag fraudulent rings — all in one intelligence canvas.
           </p>
+        </motion.div>
 
+        {/* Feature chips */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.3 }} className="flex flex-wrap gap-2 mt-8">
+          {["VF2 Subgraph Search", "Cycle Detection", "Fan-in / Fan-out", "3D Network Graph", "Risk Scoring"].map((f) => (
+            <span key={f} className="px-3 py-1.5 text-[11px] font-mono text-text-secondary border border-white/8 rounded-full bg-white/3">
+              {f}
+            </span>
+          ))}
         </motion.div>
       </div>
 
+      {/* Bottom tagline */}
+      <p className="text-[10px] font-mono text-text-tertiary z-10 tracking-widest uppercase">
+        AML · KYC · FRAUD GRAPH INTELLIGENCE
+      </p>
     </div>
-  );
-};
+
+    {/* ── Right auth panel ── */}
+    <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-14 relative">
+      {/* Mobile header */}
+      <div className="lg:hidden flex items-center gap-2 mb-10">
+        <div className="w-8 h-8 rounded-xl bg-accents-primary/10 border border-accents-primary/30 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" className="w-4 h-4 text-accents-primary fill-none stroke-current" strokeWidth="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <span className="text-white font-heading font-black text-lg tracking-tight">
+          Forensics<span className="text-accents-primary">Engine</span>
+        </span>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-sm"
+      >
+        <div className="mb-6">
+          <h2 className="text-2xl font-heading font-bold text-white tracking-tight">Welcome back</h2>
+          <p className="text-text-secondary text-sm mt-1">Sign in to access your investigation workspace.</p>
+        </div>
+
+        <SignIn
+          routing="hash"
+          afterSignInUrl="/dashboard"
+          appearance={{
+            layout: { socialButtonsPlacement: "bottom", logoPlacement: "none" },
+            variables: {
+              colorPrimary: "#10b981",
+              colorBackground: "#0d0d0d",
+              colorText: "#f9fafb",
+              colorTextSecondary: "#9ca3af",
+              colorInputBackground: "#0a0a0a",
+              colorInputText: "#f9fafb",
+              colorShimmer: "#1a1a1a",
+              borderRadius: "0.75rem",
+              fontFamily: "Inter, system-ui, sans-serif",
+              fontSize: "14px",
+            },
+            elements: {
+              rootBox: "w-full",
+              card: "bg-[#111111] border border-white/8 shadow-[0_0_60px_rgba(0,0,0,0.8)] w-full",
+              formButtonPrimary: "bg-emerald-500 hover:bg-emerald-400 text-black font-bold transition-colors",
+              formFieldInput: "bg-[#0a0a0a] border-white/10 text-white",
+              socialButtonsBlockButton: "bg-[#1a1a1a] border-white/10 text-white hover:bg-[#222]",
+              dividerText: "text-white/30",
+              footerActionLink: "text-emerald-400 hover:text-emerald-300",
+            },
+          }}
+        />
+
+        <p className="text-center mt-5 text-sm text-text-tertiary">
+          No account?{" "}
+          <Link to="/signup" className="text-accents-primary hover:text-[#34d399] font-bold transition-colors">
+            Create one →
+          </Link>
+        </p>
+      </motion.div>
+    </div>
+  </div>
+);
 
 export default Login;

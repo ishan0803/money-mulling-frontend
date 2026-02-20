@@ -5,14 +5,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#000000",
-        panel: "#0F0F0F",
-        accent: "#00F5A0",
-        accentSoft: "rgba(0,245,160,0.1)",
-        muted: "#A3A3A3",
+        background: {
+          base: "#09090b",
+          panel: "#18181b",
+          card: "#27272a",
+          floating: "rgba(24, 24, 27, 0.6)",
+        },
+        accents: {
+          primary: "#10b981",
+          primary_glow: "rgba(16, 185, 129, 0.2)",
+          danger: "#ef4444",
+          danger_glow: "rgba(239, 68, 68, 0.2)",
+          warning: "#f59e0b",
+          info: "#3b82f6",
+        },
+        text: {
+          primary: "#f8fafc",
+          secondary: "#a1a1aa",
+          tertiary: "#52525b",
+        }
       },
       fontFamily: {
-        display: ["Inter", "sans-serif"],
+        heading: ["Geist", "Satoshi", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
     },
   },
